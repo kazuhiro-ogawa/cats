@@ -1,0 +1,27 @@
+メソッド名変更有かも
+MotorControl  void stop();
+Led.h  blink();
+
+時間確認
+Buzzer.h  #define BUZZER_TIME
+Hallsensor.h  #define SERCH_TIME 2000
+Led.cpp  blink delay(2000)
+Motor.h  #define STOP NORMAL REVERSE
+
+
+保留
+Motorcontrol.cpp returnHome
+Button.cpp  ゲッターセッター必要？
+
+
+確認
+Motor.cpp Motorの引数　(LRがちゃんとしているか確認する)
+
+Motorcontrol.cpp rotate (左右の旋回の判定と向きのチェック、delay時間で正確に回れるかチェック)
+Motorcontrol.cpp　back(バックのスピードを変える必要がある？あと途中で止まる動作が必要？)
+
+
+強制停止する方法
+
+Motorcontrol.cpp　goStraight()　if文で止めれる？
+bureinで止める？
