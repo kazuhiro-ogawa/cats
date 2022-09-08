@@ -1,6 +1,7 @@
-メソッド名変更有かも
-MotorControl  void stop();
-Led.h  blink();
+
+//メソッド名変更有かも
+//MotorControl  void stop(); → void brakes();
+//Led.h  blink(); → flicker();
 
 時間確認
 Buzzer.h  #define BUZZER_TIME
