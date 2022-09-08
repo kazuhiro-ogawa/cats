@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CATS</string>
+    <string name="confirmation">お呼び出し中番号の確認</string>
+    <string name="setting">テーブル番号の設定</string>
+    <string name="select">接続する CATS を選択：</string>
+    <string name="num">設定する番号を入力：</string>
+    <string name="send">CATS へ送信</string>
+    <string name="end">MENU に戻る</string>
+</resources>

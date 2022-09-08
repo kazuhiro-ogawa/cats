@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CATS</string>
+    <string name="confirmation">Check ringing number</string>
+    <string name="setting">Setting the table number</string>
+</resources>
