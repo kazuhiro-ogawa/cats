@@ -1,5 +1,7 @@
+#include <Servo.h>
+
 #include <Arduino.h>
-#include "Brain.h"
+/*#include "Brain.h"*/
 #include "MotorControl.h"
 #include "Motor.h"
 #include "ServoMotor.h"
@@ -9,7 +11,8 @@
 #include "Button.h"
 #include "ObstacleDetection.h"
 #include "TofDetection.h"
-#include "SHallSensor.h"
+#include "HallSensor.h"
+
 
 /* 各クラスをインスタンス化 */
 Brain brain;
@@ -32,14 +35,20 @@ HallSensor hallSensorR = HallSensor(HALL_SENSOR_R_PIN);
 MODE g_mode = WAIT;
 ACTION_STATE action = ENTRY;
 
-void change_mode(MODE mode) {
+void change_mode(MODE mode) {                       //アクションを自走してよいか確認
   g_mode = mode;
 }
 
+boolean flg = false;                                //仮時装　旋回の向き
+boolean finishFlg = false;                         //仮自走　清掃終了フラグ
+boolean trenFlg = false;                          //仮自走　検知フラグ
+int checkFlg = 1;                                 //段差検知か障害物検知かチェック
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(obstacleDetectionL.INPUT);
+  pinMode(obstacleDetectionR.INPUT);
 
 
 }
@@ -55,33 +64,57 @@ void loop() {
 
   switch (g_mode) {
 
-    // 待機モード
+    // 待機モード   OK
     case WAIT:
       switch (action) {
         case ENTRY:
-          break;
+        Led.on();
+        action = DO;
+        break;
         case DO :
-          break;
+        if(30 == HIGH || CALL_BUTTON_PIN == HIGH || CLEAN_BUTTON_PIN == HIGH ){
+          action = EXIT;
+        }
+        break;
         case EXIT:
-          change_mode(SETTING_TABLE_NUMBER);
+        if(30 == HIGH){                                //テーブル変更ボタンのピンを入力（未設定の為仮に30とする）
+          change_mode(SETTING_TABLE_NUMBER);           //if文を入れてモードを分ける
+          action = ENTRY;
+        }
+        else if(CALL_BUTTON_PIN == HIGH) {            //呼び出しボタン          
+          action = ENTRY;
           change_mode(CALL);
+          
+        }
+        else if(CLEAN_BUTTON_PIN == HIGH){ 
+          action = ENTRY;
           change_mode(START_CLEANING);
-          break;
+          
+        }
+        
+        break;
       }
 
     // テーブル番号設定モード
     case SETTING_TABLE_NUMBER:
       switch (action) {
         case ENTRY:
+          action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
-        case EXIT:
+        case EXIT:         //テーブル番号の設定の処理を行う
+  
+
+
+        
+          action = ENTRY;
           change_mode(WAIT);
           break;
       }
 
-    // 呼び出しモード
+    // 呼び出しモード   OK
     case CALL:
       switch (action) {
         case ENTRY:
@@ -89,11 +122,13 @@ void loop() {
         case DO :
           break;
         case EXIT:
-          change_mode(CALL);
+          buzzer.on();
+          buzzer.off();
+          change_mode(WAIT);
           break;
       }
 
-    // 清掃開始モード
+    // 清掃開始モード　　OK
     case START_CLEANING:
       switch (action) {
         case ENTRY:
@@ -101,45 +136,71 @@ void loop() {
           action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
         case EXIT:
+          action = ENTRY;
           change_mode(CLEANING);
           break;
       }
 
-    // 清掃モード
+    // 清掃モード OK
     case CLEANING:
       switch (action) {
         case ENTRY:
+         action = DO;
           break;
-        case DO :
+        case DO :　　　　　　　　　　               //DOをモーターコントロールにて管理
+         motorControl.goStraight();             //直進走行
+         trenFlg = HallSensor.checkHall();
+         if(trenFlg == true){
+          action = EXIT;
+          checkFlg = 1;
+          }
+         if(digitalRead(OBS_INTERRUPT_L_PIN == LOW)){
+          action = EXIT;
+          checkFlg = 2;
+         }
+                                  
           break;
         case EXIT:
-          change_mode(STEP);
-          change_mode(OBSTACLE);
+          action = ENTRY;
+          if(checkFlg == 1){
+            change_mode(STEP);　
+          }
+          else if(checkFlg == 2){
+            change_mode(OBSTACLE);
+          }
+ 
           break;
       }
 
-    // 段差定位モード
+    // 段差定位モード  OK
     case STEP:
       switch (action) {
         case ENTRY:
+        action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
         case EXIT:
+        action = ENTRY;
           change_mode(ROTATION);
           break;
       }
 
-    // 障害物定位モード
+    // 障害物定位モード   OK
     case OBSTACLE:
       switch (action) {
         case ENTRY:
+          action = DO;
           break;
         case DO :
+          action = EXIT;
           break;
         case EXIT:
+          action = ENTRY;
           change_mode(ROTATION);
           break;
       }
@@ -148,12 +209,27 @@ void loop() {
     case ROTATION:
       switch (action) {
         case ENTRY:
+          action = DO;
           break;
         case DO :
+          action = EXIT;
           break;
         case EXIT:
+          action = ENTRY;
+          MotorControl.rotate(flg);
+          if(flg == false){
+             flg = true;
+          }else{
+             flg = false;
+          }
           change_mode(CLEANING);
+
+          
+          //清掃終了フラグを立てるためのプログラム
+          if(finishFlg == true){                                
           change_mode(CLEANING_COMPLETED);
+          
+          }
           break;
       }
 
@@ -161,6 +237,13 @@ void loop() {
     case CLEANING_COMPLETED:
       switch (action) {
         case ENTRY:
+        action = DO;
+        if(flg == false){
+          flg = true;
+        }
+        else{
+          flg =false;
+        }
           break;
         case DO :
           break;
@@ -174,10 +257,13 @@ void loop() {
     case HOME_BASE:
       switch (action) {
         case ENTRY:
+        action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
         case EXIT:
+        action = ENTRY;
           change_mode(HALL_SENSOR);
           change_mode(STOP);
           break;
@@ -201,10 +287,14 @@ void loop() {
       switch (action) {
         case ENTRY:
           servoMotor.down();
+          action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
         case EXIT:
+        action = ENTRY;
+        change_mode(WAIT);
           break;
       }
 
@@ -215,7 +305,9 @@ void loop() {
 
 
 
-    case INIT:
+    //下はウォータースライダー
+
+   /* case INIT:
       switch (action) {
         case ENTRY:
           action = DO;
@@ -288,5 +380,5 @@ void loop() {
           break;
       }
       break;
-  }
+  }*/
 }

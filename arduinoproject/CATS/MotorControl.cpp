@@ -1,19 +1,19 @@
-#include "Moter.h"
+#include "Motor.h"
 
-Moter motorL;
-moter motorR;
+Motor motorL;
+Motor motorR;
 
-void goStraight(){
+void MotorControl::goStraight(){
   motorL.driveMotor(NORMAL,STOP);
-  MotorR.driveMotor(NORMAL,STOP);
+  motorR.driveMotor(NORMAL,STOP);
   
 }
-void stop(){
+void MotorControl::stop(){
   motorL.driveMotor(STOP,STOP);
   motorR.driveMotor(STOP,STOP);
   
 }
-void rotate(boolean turn){
+void MotorControl::rotate(boolean turn){
   if(turn == true){                   //左右の旋回の判定のtrue/falseを決める、dealy時間で正確に回れるかチェック//
     motorL.driveMotor(NORMAL,STOP);
     motorR.driveMotor(STOP,STOP);
@@ -22,10 +22,10 @@ void rotate(boolean turn){
     motorL.driveMotor(STOP,STOP);
     motorR.driveMotor(NORMAL,STOP);
   }
-  delay(2000);                         //時間確認
-  goStraight();                        //直進に戻る
+  delay(2000);                         //時間確認   検知モードを把握するためdelayの時間を2回に分ける（仮に１度目で９０度旋回するとしてそこで段差検知を行う）
+                          
 } 
-void back(){
+void MotorControl::back(){
     motorL.driveMotor(STOP,NORMAL);        //バックのスピードを変える必要がある？あと途中で止まる動作が必要？
     motorR.driveMotor(STOP,NORMAL);
 }
