@@ -2,7 +2,7 @@
 
 class Led{
   private:
-  int m_led_pin;                //ピン番号
+  int m_led_pin;                
 
   public:
   
@@ -10,4 +10,4 @@ class Led{
   void on();
   void blink();
   void off();
-}
+};

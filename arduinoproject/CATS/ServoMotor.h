@@ -1,5 +1,5 @@
 #pragma once
-#define SERVO_ANGLE 90     //サーボモーターの回転角度仮
+#define SERVO_ANGLE 90     /*サーボモーターの回転角度仮*/
 
 
 class ServoMotor{
@@ -8,11 +8,11 @@ class ServoMotor{
 
             
   public :
-  ServoMotor(int servo_pin)
+  ServoMotor(int servo_pin);
   void up();
   void down();
   void init();
   
     
   
-}
+};

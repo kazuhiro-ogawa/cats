@@ -1,7 +1,5 @@
-#include <Servo.h>
-
+#include <Wire.h>
 #include <Arduino.h>
-/*#include "Brain.h"*/
 #include "MotorControl.h"
 #include "Motor.h"
 #include "ServoMotor.h"
@@ -12,13 +10,18 @@
 #include "ObstacleDetection.h"
 #include "TofDetection.h"
 #include "HallSensor.h"
+#include "CATS.h"
+
+
+
 
 
 /* 各クラスをインスタンス化 */
-Brain brain;
 MotorControl motorControl;
-Motor motorL = Motor(MOTOR_L1_PIN,MOTOR_L2_PIN);
-Motor motorR = Motor(MOTOR_R1_PIN,MOTOR_R2_PIN);
+
+/*Motor motorL = Motor(MOTOR_L1_PIN,MOTOR_L2_PIN);
+Motor motorR = Motor(MOTOR_R1_PIN,MOTOR_R2_PIN);*/
+
 ServoMotor servoMotor = ServoMotor(SERVO_PIN);
 Led led = Led(LED_PIN);
 Bluetooth bluetooth = Bluetooth(BLUETOOTH1_PIN, BLUETOOTH2_PIN);
@@ -28,28 +31,26 @@ Button cleanButton = Button(CLEAN_BUTTON_PIN);
 ObstacleDetection obstacleDetectionL = ObstacleDetection(OBS_INTERRUPT_L_PIN);
 ObstacleDetection obstacleDetectionR = ObstacleDetection(OBS_INTERRUPT_R_PIN);
 TofDetection tofDetectionL = TofDetection(TOF_SDA_PIN, TOF_SCL_PIN);
-TofDetection tofDetectionR = TofDetection(BUZZER_PIN);
+TofDetection tofDetectionR = TofDetection(TOF_SDA_PIN, TOF_SCL_PIN);
 HallSensor hallSensorL = HallSensor(HALL_SENSOR_L_PIN);
 HallSensor hallSensorR = HallSensor(HALL_SENSOR_R_PIN);
 
 MODE g_mode = WAIT;
 ACTION_STATE action = ENTRY;
 
-void change_mode(MODE mode) {                       //アクションを自走してよいか確認
+void change_mode(MODE mode) {                       /*アクションを自走してよいか確認*/
   g_mode = mode;
 }
 
-boolean flg = false;                                //仮時装　旋回の向き
-boolean finishFlg = false;                         //仮自走　清掃終了フラグ
-boolean trenFlg = false;                          //仮自走　検知フラグ
-int checkFlg = 1;                                 //段差検知か障害物検知かチェック
+boolean flg = false;                                /*仮時装　旋回の向き*/
+boolean finishFlg = false;                         /*仮自走　清掃終了フラグ*/
+boolean trenFlg = false;                          /*仮自走　検知フラグ*/
+int checkFlg = 1;                                 /*段差検知か障害物検知かチェック*/
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(obstacleDetectionL.INPUT);
-  pinMode(obstacleDetectionR.INPUT);
-
+  
 
 }
 
@@ -64,24 +65,34 @@ void loop() {
 
   switch (g_mode) {
 
-    // 待機モード   OK
+    /*待機モード   OK*/
     case WAIT:
       switch (action) {
         case ENTRY:
-        Led.on();
+        led.on();
         action = DO;
         break;
         case DO :
         if(30 == HIGH || CALL_BUTTON_PIN == HIGH || CLEAN_BUTTON_PIN == HIGH ){
           action = EXIT;
         }
+        if (digitalRead(HALL_SENSOR_L_PIN) == LOW)
+  {
+    
+    Serial.print("OK");
+  }
+  else
+  {
+    
+    Serial.print("NO");
+  }
         break;
         case EXIT:
-        if(30 == HIGH){                                //テーブル変更ボタンのピンを入力（未設定の為仮に30とする）
-          change_mode(SETTING_TABLE_NUMBER);           //if文を入れてモードを分ける
+        if(30 == HIGH){
+          change_mode(SETTING_TABLE_NUMBER);
           action = ENTRY;
         }
-        else if(CALL_BUTTON_PIN == HIGH) {            //呼び出しボタン          
+        else if(CALL_BUTTON_PIN == HIGH){         
           action = ENTRY;
           change_mode(CALL);
           
@@ -95,7 +106,7 @@ void loop() {
         break;
       }
 
-    // テーブル番号設定モード
+    /*テーブル番号設定モード*/
     case SETTING_TABLE_NUMBER:
       switch (action) {
         case ENTRY:
@@ -104,7 +115,7 @@ void loop() {
         case DO :
         action = EXIT;
           break;
-        case EXIT:         //テーブル番号の設定の処理を行う
+        case EXIT:
   
 
 
@@ -114,7 +125,7 @@ void loop() {
           break;
       }
 
-    // 呼び出しモード   OK
+    /*呼び出しモード   OK*/
     case CALL:
       switch (action) {
         case ENTRY:
@@ -128,7 +139,7 @@ void loop() {
           break;
       }
 
-    // 清掃開始モード　　OK
+    /*清掃開始モード　　OK*/
     case START_CLEANING:
       switch (action) {
         case ENTRY:
@@ -144,19 +155,19 @@ void loop() {
           break;
       }
 
-    // 清掃モード OK
+    /*清掃モード OK*/
     case CLEANING:
       switch (action) {
         case ENTRY:
          action = DO;
           break;
-        case DO :　　　　　　　　　　               //DOをモーターコントロールにて管理
-         motorControl.goStraight();             //直進走行
-         trenFlg = HallSensor.checkHall();
-         if(trenFlg == true){
+        case DO:
+         motorControl.goStraight();             
+         
+/*         if(DistanceCheck() <= 4){
           action = EXIT;
           checkFlg = 1;
-          }
+          }*/
          if(digitalRead(OBS_INTERRUPT_L_PIN == LOW)){
           action = EXIT;
           checkFlg = 2;
@@ -166,7 +177,7 @@ void loop() {
         case EXIT:
           action = ENTRY;
           if(checkFlg == 1){
-            change_mode(STEP);　
+            change_mode(STEP);
           }
           else if(checkFlg == 2){
             change_mode(OBSTACLE);
@@ -175,7 +186,7 @@ void loop() {
           break;
       }
 
-    // 段差定位モード  OK
+    /*段差定位モード  OK*/
     case STEP:
       switch (action) {
         case ENTRY:
@@ -190,7 +201,7 @@ void loop() {
           break;
       }
 
-    // 障害物定位モード   OK
+    /*障害物定位モード   OK*/
     case OBSTACLE:
       switch (action) {
         case ENTRY:
@@ -205,7 +216,7 @@ void loop() {
           break;
       }
 
-    // 旋回モード
+    /*旋回モード*/
     case ROTATION:
       switch (action) {
         case ENTRY:
@@ -216,7 +227,7 @@ void loop() {
           break;
         case EXIT:
           action = ENTRY;
-          MotorControl.rotate(flg);
+          motorControl.rotate(flg);
           if(flg == false){
              flg = true;
           }else{
@@ -225,7 +236,7 @@ void loop() {
           change_mode(CLEANING);
 
           
-          //清掃終了フラグを立てるためのプログラム
+          /*清掃終了フラグを立てるためのプログラム*/
           if(finishFlg == true){                                
           change_mode(CLEANING_COMPLETED);
           
@@ -233,7 +244,7 @@ void loop() {
           break;
       }
 
-    // 清掃完了モード
+    /* 清掃完了モード*/
     case CLEANING_COMPLETED:
       switch (action) {
         case ENTRY:
@@ -253,7 +264,7 @@ void loop() {
       }
 
 
-    // 帰巣モード
+    /*帰巣モード*/
     case HOME_BASE:
       switch (action) {
         case ENTRY:
@@ -269,20 +280,23 @@ void loop() {
           break;
       }
 
-    // ホールセンサ検知モード
+    /*ホールセンサ検知モード*/
     case HALL_SENSOR:
       switch (action) {
         case ENTRY:
+        action = DO;
           break;
         case DO :
+        action = EXIT;
           break;
         case EXIT:
+        action = ENTRY;
           servoMotor.down();
           change_mode(WAIT);
           break;
       }
 
-    // 強制停止モード
+    /*強制停止モード*/
     case STOP:
       switch (action) {
         case ENTRY:
@@ -297,15 +311,45 @@ void loop() {
         change_mode(WAIT);
           break;
       }
+  }
+  }
+/*uint16_t DistanceCheck()                  TOFセンサの距離を返す
+{
+  uint16_t distance;
+  uint16_t distance_tmp;
+  uint8_t data_cnt;
+
+  digitalWrite(25, LOW);
+  delay(5);
+  Serial.print("distance = ");
+
+  Wire.beginTransmission(0x52);
+  Wire.write(0xD3);
+  Wire.endTransmission(false);
+  Wire.requestFrom(0x52, 2);
+  
+  distance = 0;
+  distance_tmp = 0;
+  while(Wire.available())
+  {
+    distance_tmp = Wire.read();
+    distance = (distance << (data_cnt*8)) | distance_tmp;
+    
+  }
+
+  Serial.print(distance);
+  Serial.println(" mm");
+  digitalWrite(25, HIGH);
+  delay(45);
+  return distance;
+}*/
 
 
 
 
 
 
-
-
-    //下はウォータースライダー
+    /*下はウォータースライダー*/
 
    /* case INIT:
       switch (action) {
@@ -380,5 +424,4 @@ void loop() {
           break;
       }
       break;
-  }*/
-}
+  }}*/

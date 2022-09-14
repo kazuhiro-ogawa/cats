@@ -2,6 +2,8 @@
 
 
 class ObstacleDetection{
-  private :
+  private:
   int m_obs_pin;
-}
+  public:
+  ObstacleDetection(int obs_pin);
+};

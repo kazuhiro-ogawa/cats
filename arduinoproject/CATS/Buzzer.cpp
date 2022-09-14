@@ -1,15 +1,16 @@
 #include <Arduino.h>
 #include"Buzzer.h"
+#include "CATS.h"
 
 Buzzer::Buzzer(int buzzer_pin){
   buzzer_time = BUZZER_TIME;
   m_buzzer_pin = buzzer_pin;
-  pinMode(buzzer_pin,INPUT_PULLUP);
+  pinMode(m_buzzer_pin,INPUT);
 }
 void Buzzer::on(){
-  digitalWrite(buzzer_pin,HIGH);
-  delay(Buzzer_time);
+  digitalWrite(m_buzzer_pin,HIGH);
+  delay(buzzer_time);
 }
 void Buzzer::off(){
-  digitalWrite(buzzer_pin,LOW);
+  digitalWrite(m_buzzer_pin,LOW);
 }

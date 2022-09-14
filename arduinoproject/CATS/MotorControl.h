@@ -4,7 +4,8 @@
 class MotorControl{
   public :
   void goStraight();
-  void stop();                   //メソッド名変更有？
-  void rotate(boolean turn);
+  void stops();                   /*メソッド名変更有？*/
+  void rotate(bool turn);
   void back();
   void returnHome();
+};
