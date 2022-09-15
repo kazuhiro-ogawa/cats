@@ -8,8 +8,8 @@
 #define MOTOR_R2_PIN 13
 #define SERVO_PIN 8
 #define LED_PIN 50
-#define BLUETOOTH1_PIN 2
-#define BLUETOOTH2_PIN 3
+#define BLUETOOTH1_PIN 2          /*18に変更しないといけない*/
+#define BLUETOOTH2_PIN 3          /*19*/
 #define BUZZER_PIN 52
 #define CALL_BUTTON_PIN 0
 #define CLEAN_BUTTON_PIN 4
