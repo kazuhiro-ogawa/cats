@@ -6,7 +6,7 @@
 #include "Motor.h"
 #include "ServoMotor.h"
 #include "Led.h"
-#include "Bluetooth.h"
+//#include "Bluetooth.h"
 #include "Buzzer.h"
 #include "Button.h"
 #include "ObstacleDetection.h"
@@ -20,7 +20,7 @@ Motor motorL = Motor(MOTOR_L1_PIN, MOTOR_L2_PIN);
 Motor motorR = Motor(MOTOR_R1_PIN, MOTOR_R2_PIN);
 ServoMotor servoMotor = ServoMotor(SERVO_PIN);
 Led led = Led(LED_PIN);
-Bluetooth bluetooth = Bluetooth(BLUETOOTH1_PIN, BLUETOOTH2_PIN);
+//Bluetooth bluetooth = Bluetooth(BLUETOOTH1_PIN, BLUETOOTH2_PIN);
 Buzzer buzzer = Buzzer(BUZZER_PIN);
 Button callButton = Button(CALL_BUTTON_PIN);
 Button cleanButton = Button(CLEAN_BUTTON_PIN);
@@ -36,7 +36,6 @@ ACTION_STATE action = ENTRY;
 
 boolean callBtnflg;
 boolean cleanBtnflg;
-boolean btReceiveflg;
 
 void change_mode(MODE mode) {                     // アクションを自走してよいか確認
   g_mode = mode;
@@ -68,10 +67,6 @@ void loop() {
           }
           if (cleanButton.Read()) {               // 清掃開始ボタン押下
             cleanBtnflg = true;
-            action = EXIT;
-          }
-          if (bluetooth.receiveData()) {          // Bluetooth受信？？？
-            btReceiveflg = true;
             action = EXIT;
           }
           break;

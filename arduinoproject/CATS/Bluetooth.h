@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 class Bluetooth
 {
@@ -11,4 +11,4 @@ class Bluetooth
     Bluetooth(int m_bluetooth1_pin, int m_bluetooth2_pin);  // コンストラクタ
     void Bluetooth::receiveData();                          // データ受信
     void Bluetooth::sendData();                             // データ送信
-};
+};*/
