@@ -1,9 +1,11 @@
 #pragma once
 
-
-class ObstacleDetection{
+class ObstacleDetection
+{
   private:
-  int m_obs_pin;
+    int m_obs_interrupt_pin;
+
   public:
-  ObstacleDetection(int obs_pin);
+    ObstacleDetection(int obs_interrupt_pin);
+    int Read();
 };

@@ -1,9 +1,7 @@
 #include <Arduino.h>
 #include "TofDetection.h"
-#include "CATS.h"
 
-
-TofDetection::TofDetection(int tof_pin1,int tof_pin2){
-  m_tof_pin1 = tof_pin1;
-  m_tof_pin2 = tof_pin2;
+TofDetection::TofDetection(int tof_sda_pin, int m_tof_scl_pin) {
+  m_tof_sda_pin = tof_sda_pin;
+  m_tof_scl_pin = tof_scl_pin;
 }

@@ -1,9 +1,11 @@
 #pragma once;
 
-
-class Button{
+class Button
+{
   private:
-  int m_button_pin;
+    int m_button_pin;
+
   public:
-  Button(int button_pin);
+    Button(int button_pin);
+    int Read();
 };
