@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include "Motor.h"
 #include "MotorControl.h"
+#include "CATS.h"
 
-Moter motorL(MOTOR_L1_PIN, MOTOR_L2_PIN);
-Moter motorR(MOTOR_R1_PIN, MOTOR_R2_PIN);
+Motor motorL(MOTOR_L1_PIN, MOTOR_L2_PIN);
+Motor motorR(MOTOR_R1_PIN, MOTOR_R2_PIN);
 
 void goStraight() {
   motorL.driveMotor(NORMAL, STOP);
@@ -62,5 +63,5 @@ void MotorControl::back() {
   motorR.driveMotor(LOW, HIGH);
 }
 
-/*void returnHome(){                                //処理が難しい、保留
-  }*/
+void MotorControl::returnHome(){                                  //処理が難しい、保留
+}

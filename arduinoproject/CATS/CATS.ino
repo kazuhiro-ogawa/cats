@@ -16,8 +16,8 @@
 /* 各クラスをインスタンス化 */
 //Brain brain;
 MotorControl motorControl;
-Motor motorL = Motor(MOTOR_L1_PIN, MOTOR_L2_PIN);
-Motor motorR = Motor(MOTOR_R1_PIN, MOTOR_R2_PIN);
+//Motor motorL = Motor(MOTOR_L1_PIN, MOTOR_L2_PIN);
+//Motor motorR = Motor(MOTOR_R1_PIN, MOTOR_R2_PIN);
 ServoMotor servoMotor = ServoMotor(SERVO_PIN);
 Led led = Led(LED_PIN);
 //Bluetooth bluetooth = Bluetooth(BLUETOOTH1_PIN, BLUETOOTH2_PIN);
@@ -58,7 +58,7 @@ void loop() {
     case WAIT:                                    // 待機モード
       switch (action) {
         case ENTRY:
-          led.on()                                // LED点灯
+          led.on();                               // LED点灯
           break;
         case DO:
           if (callButton.Read()) {                // 呼び出しボタン押下
@@ -79,11 +79,6 @@ void loop() {
           else if (cleanBtnflg == true) {
             cleanBtnflg = false;
             change_mode(START_CLEANING);          // 清掃開始モードへ
-            action = ENTRY;
-          }
-          else if (btReceiveflg == true) {
-            btReceiveflg = false;
-            change_mode(SETTING_TABLE_NUMBER);    // テーブル番号設定モードへ
             action = ENTRY;
           }
           break;
@@ -149,7 +144,7 @@ void loop() {
     case CALL:                                    // 呼び出しモード
       switch (action) {
         case ENTRY:
-          buzzer.on()                             // ブザー鳴動・Android端末へテーブル番号送信？？？
+          buzzer.on();                             // ブザー鳴動・Android端末へテーブル番号送信？？？
           action = DO;
           break;
         case DO:
@@ -182,13 +177,12 @@ void loop() {
     case CLEANING:                                // 清掃モード
       switch (action) {
         case ENTRY:
-          motorControl.goStraight()               // 直進走行
+          motorControl.goStraight();               // 直進走行
           action = DO;
           break;
         case DO:
-          //if (callButton.Read()) {
           callBtnflg = true;
-          if (DistanceCheck() <= 4) {
+          if (callButton.Read()) {
             callBtnflg = true;
             checkFlg = 1;
             action = EXIT;
@@ -277,7 +271,7 @@ void loop() {
             flg = false;
           }
           break;
-          motorControl.returnHome()               // 旋回停止・方向転換
+          motorControl.returnHome();               // 旋回停止・方向転換
           action = DO;
           break;
         case DO:
@@ -293,7 +287,7 @@ void loop() {
     case HOME_BASE:                               // 帰巣モード
       switch (action) {
         case ENTRY:
-          motorControl.goStraight()               // 直進走行
+          motorControl.goStraight();               // 直進走行
           action = DO;
           break;
         case DO:                                  // 元のルートを逆に走行（障害物・段差・ホールセンサ検知）？？？
@@ -304,10 +298,11 @@ void loop() {
           break;
         case EXIT:
           change_mode(HALL_SENSOR);
-          else if (cleanButton == true) {
-            cleanButton = false;
+          if (cleanButton.Read()) {               // 清掃開始ボタン押下
+            cleanBtnflg = true;
             change_mode(FORCE_STOP);              // 強制停止モードへ
             action = ENTRY;
+            cleanButton = false;
           }
           break;
       }
