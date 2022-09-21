@@ -8,7 +8,7 @@ Buzzer::Buzzer(int buzzer_pin) {
 
 void Buzzer::on() {
   digitalWrite(m_buzzer_pin, HIGH);
-  tone(m_buzzer_pin,200,BUZZER_TIME);       //ブザーピン、ブザーの周波数、ブザーの時間
+  tone(m_buzzer_pin, 200, BUZZER_TIME);     //ブザーピン、ブザーの周波数、ブザーの時間
   delay(BUZZER_TIME);
 }
 

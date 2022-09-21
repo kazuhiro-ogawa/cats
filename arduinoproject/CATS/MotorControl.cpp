@@ -50,7 +50,7 @@ void MotorControl::rotate(bool turn) {
     motorL.driveMotor(LOW, LOW);
     motorR.driveMotor(HIGH, LOW);
   }
-  delay(0);                                      //時間確認   検知モードを把握するためdelayの時間を2回に分ける（仮に１度目で９０度旋回するとしてそこで段差検知を行う）
+  delay(0);                                         //時間確認   検知モードを把握するためdelayの時間を2回に分ける（仮に１度目で９０度旋回するとしてそこで段差検知を行う）
   goStraight();                                     //直進に戻る
 }
 
@@ -63,5 +63,5 @@ void MotorControl::back() {
   motorR.driveMotor(LOW, HIGH);
 }
 
-void MotorControl::returnHome(){                                  //処理が難しい、保留
+void MotorControl::returnHome() {                   //処理が難しい、保留
 }

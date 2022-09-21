@@ -32,7 +32,7 @@ typedef enum {
   ROTATION,               // 旋回モード
   HOME_BASE,              // 帰巣モード
   HALL_SENSOR,            // ホールセンサ検知モード
-  FORCE_STOP,                   // 強制停止モード
+  FORCE_STOP,             // 強制停止モード
   CLEANING_COMPLETED,     // 清掃完了モード
 } MODE;
 

@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <Arduino.h>
-//#include "Brain.h"
 #include "CATS.h"
 #include "MotorControl.h"
 #include "Motor.h"
@@ -59,6 +58,7 @@ void loop() {
       switch (action) {
         case ENTRY:
           led.on();                               // LED点灯
+          action = DO;
           break;
         case DO:
           if (callButton.Read()) {                // 呼び出しボタン押下
@@ -85,46 +85,6 @@ void loop() {
       }
 
 
-    /*待機モード   OK
-        if(30 == HIGH || CALL_BUTTON_PIN == HIGH || CLEAN_BUTTON_PIN == HIGH ){
-          action = EXIT;
-        }
-        int base = 2500;
-        float voltage1 =(analogRead(A0) / 1024.0) * 5.0 * 1000;
-        float voltage2 =(analogRead(A1) / 1024.0) * 5.0 * 1000;
-        if (base<=voltage1||base<=voltage2)
-      {
-
-      Serial.print("OK");
-      Serial.print((voltage1 - base)/5.0);
-      }
-      else
-      {
-
-      Serial.print("NO");
-      Serial.print((base - voltage2)/5);
-      }
-        break;
-        case EXIT:
-        if(30 == HIGH){
-          change_mode(SETTING_TABLE_NUMBER);
-          action = ENTRY;
-        }
-        else if(CALL_BUTTON_PIN == HIGH){
-          action = ENTRY;
-          change_mode(CALL);
-
-        }
-        else if(CLEAN_BUTTON_PIN == HIGH){
-          action = ENTRY;
-          change_mode(START_CLEANING);
-
-        }
-
-        break;
-      }
-    */
-
     case SETTING_TABLE_NUMBER:                    // テーブル番号設定モード
       switch (action) {
         case ENTRY:
@@ -144,7 +104,7 @@ void loop() {
     case CALL:                                    // 呼び出しモード
       switch (action) {
         case ENTRY:
-          buzzer.on();                             // ブザー鳴動・Android端末へテーブル番号送信？？？
+          buzzer.on();                            // ブザー鳴動・Android端末へテーブル番号送信？？？
           action = DO;
           break;
         case DO:
@@ -177,7 +137,7 @@ void loop() {
     case CLEANING:                                // 清掃モード
       switch (action) {
         case ENTRY:
-          motorControl.goStraight();               // 直進走行
+          motorControl.goStraight();              // 直進走行
           action = DO;
           break;
         case DO:
@@ -233,7 +193,7 @@ void loop() {
           action = EXIT;
           break;
         case EXIT:
-          change_mode(ROTATION);                // 旋回モードへ
+          change_mode(ROTATION);                  // 旋回モードへ
           action = ENTRY;
           break;
       }
@@ -256,8 +216,7 @@ void loop() {
           }
           change_mode(CLEANING);                  // 清掃モードへ
           action = ENTRY;
-          /*清掃終了フラグを立てるためのプログラム*/
-          if (finishFlg == true) {
+          if (finishFlg == true) {                // 清掃終了フラグを立てるためのプログラム
             change_mode(CLEANING_COMPLETED);      // 清掃完了モードへ
             action = ENTRY;
           }
@@ -265,33 +224,10 @@ void loop() {
       }
 
 
-    case CLEANING_COMPLETED:                      // 清掃完了モード
-      switch (action) {
-        case ENTRY:
-          if (flg == false) {
-            flg = true;
-          }
-          else {
-            flg = false;
-          }
-          break;
-          motorControl.returnHome();               // 旋回停止・方向転換
-          action = DO;
-          break;
-        case DO:
-          action = EXIT;
-          break;
-        case EXIT:
-          change_mode(HOME_BASE);                 // 帰巣モードへ
-          action = ENTRY;
-          break;
-      }
-
-
     case HOME_BASE:                               // 帰巣モード
       switch (action) {
         case ENTRY:
-          motorControl.goStraight();               // 直進走行
+          motorControl.goStraight();              // 直進走行
           action = DO;
           break;
         case DO:                                  // 元のルートを逆に走行（障害物・段差・ホールセンサ検知）？？？
@@ -342,9 +278,32 @@ void loop() {
           action = EXIT;
           break;
         case EXIT:
-          action = ENTRY;
           finishFlg = false;
           change_mode(WAIT);                      // 待機モードへ
+          action = ENTRY;
+          break;
+      }
+
+
+    case CLEANING_COMPLETED:                      // 清掃完了モード
+      switch (action) {
+        case ENTRY:
+          if (flg == false) {
+            flg = true;
+          }
+          else {
+            flg = false;
+          }
+          break;
+          motorControl.returnHome();              // 旋回停止・方向転換
+          action = DO;
+          break;
+        case DO:
+          action = EXIT;
+          break;
+        case EXIT:
+          change_mode(HOME_BASE);                 // 帰巣モードへ
+          action = ENTRY;
           break;
       }
 
@@ -379,82 +338,5 @@ void loop() {
         delay(45);
         return distance;
         }*/
-
-
-      /*下はウォータースライダー
-                case INIT:
-                  switch (action) {
-                    case ENTRY:
-                      action = DO;
-                      break;
-                    case DO:
-                      if (!button.Read()) {
-                        action = EXIT;
-                      }
-                      break;
-                    case EXIT:
-                      change_mode(COUNTDOWN);
-                      action = ENTRY;
-                      break;
-                  }
-                  break;
-
-                case COUNTDOWN :
-                  switch (action) {
-                    case ENTRY:
-                      MsTimer2::start();
-                      action = DO;
-                      break;
-                    case DO:
-                      lcd.lcd_print(countdown_print[g_count]);
-                      if (g_count < 0) {
-                        MsTimer2::stop();
-                        action = EXIT;
-                      }
-                      break;
-                    case EXIT:
-                      change_mode(GATE);
-                      action = ENTRY;
-                      g_count = 6;
-                      break;
-                  }
-                  break;
-
-                case GATE :
-                  switch (action) {
-                    case ENTRY:
-                      gate.gate_opn();
-                      action = DO;
-                      break;
-                    case DO:
-                      delay(3000);
-                      action = EXIT;
-                      break;
-                    case EXIT:
-                      gate.gate_cls();
-                      change_mode(WAIT);
-                      action = ENTRY;
-                      break;
-                  }
-                  break;
-
-                case WAIT :
-                  switch (action) {
-                    case ENTRY:
-                      lcd.lcd_print(countdown_print[g_count]);
-                      action = DO;
-                      break;
-                    case DO:
-                      if (sensor.check_passing() || !button.Read()) {
-                        action = EXIT;
-                      }
-                      break;
-                    case EXIT:
-                      change_mode(COUNTDOWN);
-                      action = ENTRY;
-                      break;
-                  }
-                  break;
-      */
   }
 }
