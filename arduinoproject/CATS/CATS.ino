@@ -233,7 +233,8 @@ void loop() {
           action = EXIT;
           break;
         case EXIT:
-          change_mode(ROTATION);                  // 旋回モードへ
+          change_mode(ROTATION);                // 旋回モードへ
+          action = ENTRY;
           break;
       }
 
@@ -241,6 +242,7 @@ void loop() {
     case ROTATION:                                // 旋回モード
       switch (action) {
         case ENTRY:
+          action = DO;
           break;
         case DO:
           action = EXIT;
@@ -323,6 +325,7 @@ void loop() {
           servoMotor.down();                      // サーボモータDOWN
           change_mode(WAIT);                      // 待機モードへ
           action = ENTRY;
+          finishFlg = false;
           break;
       }
 
@@ -340,6 +343,7 @@ void loop() {
           break;
         case EXIT:
           action = ENTRY;
+          finishFlg = false;
           change_mode(WAIT);                      // 待機モードへ
           break;
       }
