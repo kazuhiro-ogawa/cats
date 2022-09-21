@@ -44,7 +44,7 @@ void change_mode(MODE mode) {                     // アクションを自走し
 boolean flg = false;                              // 仮時装　旋回の向き
 boolean finishFlg = false;                        // 仮自走　清掃終了フラグ
 boolean trenFlg = false;                          // 仮自走　検知フラグ
-int checkFlg = 1;                                 // 段差検知か障害物検知かチェック
+int checkFlg = 0;                                 // 段差検知か障害物検知かチェック
 
 
 void setup() {
@@ -197,9 +197,11 @@ void loop() {
           if (checkFlg == 1) {
             change_mode(STEP);                    // 段差定位モードへ
             action = ENTRY;
+            checkFlg = 0;
           } else if (checkFlg == 2) {
             change_mode(OBSTACLE);                // 障害物定位モードへ
             action = ENTRY;
+            checkFlg = 0;
           }
           break;
       }
