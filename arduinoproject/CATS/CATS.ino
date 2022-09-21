@@ -337,5 +337,38 @@ void loop() {
         delay(45);
         return distance;
         }*/
+  
+  
+  
   }
+  
+}
+int hallsensor()                       //TOFセンサー検知 
+{
+  uint16_t distance;
+  uint16_t distance_tmp;
+  uint8_t data_cnt;
+  digitalWrite(25, LOW);
+  delay(5);
+  Serial.print("distance = ");
+
+  Wire.beginTransmission(0x52);
+  Wire.write(0xD3);
+  Wire.endTransmission(false);
+  Wire.requestFrom(0x52, 2);
+  data_cnt = 0;
+  distance = 0;
+  distance_tmp = 0;
+  while(Wire.available())
+  {
+    distance_tmp = Wire.read();
+    distance = (distance << (data_cnt*8)) | distance_tmp;
+    data_cnt++;
+  }
+
+  Serial.print(distance);
+  Serial.println(" mm");
+  digitalWrite(25, HIGH);
+  delay(45);
+  return distance;
 }
