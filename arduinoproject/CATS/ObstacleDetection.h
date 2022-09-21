@@ -7,5 +7,5 @@ class ObstacleDetection
 
   public:
     ObstacleDetection(int obs_interrupt_pin);
-    int Read();
+    int putOn();
 };

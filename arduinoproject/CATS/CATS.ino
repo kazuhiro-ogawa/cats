@@ -61,11 +61,11 @@ void loop() {
           action = DO;
           break;
         case DO:
-          if (callButton.Read()) {                // 呼び出しボタン押下
+          if (callButton.putOn()) {                // 呼び出しボタン押下
             callBtnflg = true;
             action = EXIT;
           }
-          if (cleanButton.Read()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
             cleanBtnflg = true;
             action = EXIT;
           }
@@ -142,12 +142,12 @@ void loop() {
           break;
         case DO:
           callBtnflg = true;
-          if (callButton.Read()) {
+          if (callButton.putOn()) {
             callBtnflg = true;
             checkFlg = 1;
             action = EXIT;
           }
-          if (digitalRead(OBS_INTERRUPT_L_PIN == LOW)) {
+          if (obstacleDetectionL.putOn() || obstacleDetectionR.putOn()) {
             callBtnflg = true;
             checkFlg = 2;
             action = EXIT;
@@ -231,14 +231,14 @@ void loop() {
           action = DO;
           break;
         case DO:                                  // 元のルートを逆に走行（障害物・段差・ホールセンサ検知）？？？
-          if (cleanButton.Read()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
             cleanBtnflg = true;
             action = EXIT;
           }
           break;
         case EXIT:
           change_mode(HALL_SENSOR);
-          if (cleanButton.Read()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
             cleanBtnflg = true;
             change_mode(FORCE_STOP);              // 強制停止モードへ
             action = ENTRY;
@@ -290,8 +290,7 @@ void loop() {
         case ENTRY:
           if (flg == false) {
             flg = true;
-          }
-          else {
+          } else {
             flg = false;
           }
           break;

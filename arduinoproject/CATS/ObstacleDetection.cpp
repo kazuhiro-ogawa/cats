@@ -6,3 +6,7 @@ ObstacleDetection::ObstacleDetection(int obs_interrupt_pin) {
   m_obs_interrupt_pin = obs_interrupt_pin;
   pinMode(m_obs_interrupt_pin, INPUT);
 }
+
+int ObstacleDetection::putOn() {
+  return digitalRead(m_obs_interrupt_pin);
+}

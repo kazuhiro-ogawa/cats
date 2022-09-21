@@ -6,6 +6,6 @@ Button::Button(int button_pin) {
   pinMode(m_button_pin, INPUT_PULLUP);
 }
 
-int Button::Read() {
+int Button::putOn() {
   return digitalRead(m_button_pin);
 }

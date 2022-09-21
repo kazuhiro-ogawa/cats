@@ -7,5 +7,5 @@ class Button
 
   public:
     Button(int button_pin);
-    int Read();
+    int putOn();
 };
