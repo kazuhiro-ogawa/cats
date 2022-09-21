@@ -61,11 +61,11 @@ void loop() {
           action = DO;
           break;
         case DO:
-          if (callButton.putOn()) {                // 呼び出しボタン押下
+          if (callButton.putOn()) {               // 呼び出しボタン押下
             callBtnflg = true;
             action = EXIT;
           }
-          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {              // 清掃開始ボタン押下
             cleanBtnflg = true;
             action = EXIT;
           }
@@ -231,14 +231,14 @@ void loop() {
           action = DO;
           break;
         case DO:                                  // 元のルートを逆に走行（障害物・段差・ホールセンサ検知）？？？
-          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {              // 清掃開始ボタン押下
             cleanBtnflg = true;
             action = EXIT;
           }
           break;
         case EXIT:
           change_mode(HALL_SENSOR);
-          if (cleanButton.putOn()) {               // 清掃開始ボタン押下
+          if (cleanButton.putOn()) {              // 清掃開始ボタン押下
             cleanBtnflg = true;
             change_mode(FORCE_STOP);              // 強制停止モードへ
             action = ENTRY;
