@@ -121,6 +121,7 @@ void loop() {
     case START_CLEANING:                          // 清掃開始モード
       switch (action) {
         case ENTRY:
+          servoMotor.init();
           servoMotor.up();                        // サーボモータUP
           action = DO;
           break;
@@ -142,7 +143,7 @@ void loop() {
           break;
         case DO:
           callBtnflg = true;
-          if (callButton.putOn()) {
+          if (callButton.putOn()) {               //メモ帳に記載
             callBtnflg = true;
             checkFlg = 1;
             action = EXIT;

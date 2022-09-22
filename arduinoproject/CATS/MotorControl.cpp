@@ -6,7 +6,7 @@
 Motor motorL(MOTOR_L1_PIN, MOTOR_L2_PIN);
 Motor motorR(MOTOR_R1_PIN, MOTOR_R2_PIN);
 
-void goStraight() {
+/*void goStraight() {
   motorL.driveMotor(NORMAL, STOP);
   motorR.driveMotor(NORMAL, STOP);
 }
@@ -14,7 +14,7 @@ void goStraight() {
 void brakes() {
   motorL.driveMotor(STOP, STOP);
   motorR.driveMotor(STOP, STOP);
-}
+}*/
 
 void MotorControl::goStraight() {                   //digitalWrite()   digitalWriteをつけて動かす？
   analogWrite(MOTOR_L1_PIN, NORMAL);
