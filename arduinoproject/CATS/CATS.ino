@@ -143,7 +143,7 @@ void loop() {
           break;
         case DO:
           callBtnflg = true;
-          if (callButton.putOn()) {               //メモ帳に記載
+          if (callButton.putOn()) {               //段差検知をメモ帳に記載
             callBtnflg = true;
             checkFlg = 1;
             action = EXIT;
@@ -236,6 +236,7 @@ void loop() {
             cleanBtnflg = true;
             action = EXIT;
           }
+                                                  //ホールセンサ検知モードを入れる
           break;
         case EXIT:
           change_mode(HALL_SENSOR);
@@ -344,7 +345,7 @@ void loop() {
   }
   
 }
-int hallsensor()                       //TOFセンサー検知 
+int tofsensor()                       //TOFセンサー検知 
 {
   uint16_t distance;
   uint16_t distance_tmp;
